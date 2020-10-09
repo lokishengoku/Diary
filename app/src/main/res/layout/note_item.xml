@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    android:paddingVertical="8dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView
+        android:id="@+id/txtTimeRemaining"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:fontFamily="monospace"
+        android:textSize="16sp"
+        android:textColor="@color/colorGrey"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:text="5 days ago"/>
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewNoteContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtTimeRemaining"
+        app:cardCornerRadius="8dp"
+        app:cardBackgroundColor="@color/colorPrimary">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="16dp"
+            android:gravity="center_vertical">
+            <TextView
+                android:id="@+id/txtCreatedTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:fontFamily="monospace"
+                android:textSize="18sp"
+                android:textColor="@color/colorGrey"
+                android:text="10:22"/>
+            <TextView
+                android:id="@+id/txtAmPm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PM"
+                android:textStyle="bold"
+                android:fontFamily="monospace"
+                android:textSize="18sp"
+                android:layout_marginStart="12dp"
+                android:textColor="@color/colorGrey"
+                android:layout_below="@+id/txtCreatedTime"/>
+            <TextView
+                android:id="@+id/txtTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Day 1"
+                android:textStyle="bold"
+                android:fontFamily="monospace"
+                android:textSize="18sp"
+                android:textColor="@color/colorBlack"
+                android:layout_marginStart="16dp"
+                android:layout_toEndOf="@+id/txtCreatedTime"/>
+
+            <TextView
+                android:id="@+id/txtContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtTitle"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="6dp"
+                android:layout_toEndOf="@+id/txtCreatedTime"
+                android:fontFamily="monospace"
+                android:text="ready steady go"
+                android:textSize="18sp" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

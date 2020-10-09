@@ -3,6 +3,8 @@ package burstcode.diary;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import burstcode.diary.adapter.NoteAdapter;
 import burstcode.diary.model.Note;
 
 public class DialogsActivity extends AppCompatActivity {
@@ -35,6 +38,8 @@ public class DialogsActivity extends AppCompatActivity {
     private DatabaseReference dbRef;
 
     private ArrayList<Note> notes;
+    private RecyclerView recViewNotes;
+    private NoteAdapter noteAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +55,12 @@ public class DialogsActivity extends AppCompatActivity {
         dbRef = database.getReference().child(user.getUid());
 
 //        writeNewNote(22, 18, 9, 10, 2020, "Test", "just a test", 0x555555);
+        recViewNotes = findViewById(R.id.recViewNotes);
+        recViewNotes.setLayoutManager(new LinearLayoutManager(this));
         notes = new ArrayList<>();
+        noteAdapter = new NoteAdapter(this);
+        noteAdapter.setNotes(notes);
+        recViewNotes.setAdapter(noteAdapter);
         readData();
 
     }
@@ -64,15 +74,13 @@ public class DialogsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.btnMenuLogout:
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.btnMenuLogout) {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void writeNewNote(int hour, int minute, int day, int month, int year, String title, String content, int color){
@@ -103,6 +111,7 @@ public class DialogsActivity extends AppCompatActivity {
                             (long)noteMap.get("color"));
                     notes.add(note);
                 }
+                noteAdapter.notifyDataSetChanged();
             }
 
             @Override
