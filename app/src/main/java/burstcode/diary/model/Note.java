@@ -16,15 +16,15 @@ public class Note {
     private String content;
     private int color;
 
-    public Note(int hour, int minute, int day, int month, int year, String title, String content, int color) {
-        this.hour = hour;
-        this.minute = minute;
-        this.day = day;
-        this.month = month;
-        this.year = year;
+    public Note(long hour, long minute, long day, long month, long year, String title, String content, long color) {
+        this.hour = (int) hour;
+        this.minute = (int) minute;
+        this.day = (int) day;
+        this.month = (int) month;
+        this.year = (int) year;
         this.title = title;
         this.content = content;
-        this.color = color;
+        this.color = (int) color;
     }
 
     public int getHour() {
