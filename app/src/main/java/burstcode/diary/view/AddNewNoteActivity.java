@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,11 +26,16 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 import com.pes.androidmaterialcolorpickerdialog.ColorPickerCallback;
 
+import java.util.Objects;
+
 import burstcode.diary.R;
 import burstcode.diary.model.Note;
 
 public class AddNewNoteActivity extends AppCompatActivity {
+    private static final String TAG = "AddNewNoteActivity";
     public static final int RESULT_DELETE = 666;
+    public static final int RESULT_UPDATE = 232;
+
     private Toolbar toolbar;
     //Bottom menu
     private ImageView btnDatePicker, btnTimePicker, btnColorPicker, btnDelete;
@@ -64,7 +70,7 @@ public class AddNewNoteActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbarAddNote);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_24);
 
@@ -91,6 +97,7 @@ public class AddNewNoteActivity extends AppCompatActivity {
         isNewNote = intent.getBooleanExtra("isNewNote", true);
         if (!isNewNote) {
             note = (Note) intent.getSerializableExtra("currentNote");
+            assert note != null;
             edtTitle.setText(note.getTitle());
             edtContent.setText(note.getContent());
             pickedDate = true;
@@ -202,14 +209,17 @@ public class AddNewNoteActivity extends AppCompatActivity {
             else if (!pickedTime) Toast.makeText(this, "Please choose your time", Toast.LENGTH_SHORT).show();
             else if (!pickedColor) Toast.makeText(this, "Please choose your color", Toast.LENGTH_SHORT).show();
             else {
+                Intent returnIntent = new Intent();
+                note.setContent(edtContent.getText().toString());
+                note.setTitle(edtTitle.getText().toString());
                 if (isNewNote){
-                    Intent returnIntent = new Intent();
-                    note.setContent(edtContent.getText().toString());
-                    note.setTitle(edtTitle.getText().toString());
                     returnIntent.putExtra("newNote", note);
                     setResult(Activity.RESULT_OK, returnIntent);
-                    finish();
+                } else {
+                    Log.d(TAG, "onOptionsItemSelected: 216");
+                    NotesActivity.updateNote(note);
                 }
+                finish();
             }
         }
         return super.onOptionsItemSelected(item);

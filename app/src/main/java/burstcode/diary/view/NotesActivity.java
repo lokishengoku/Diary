@@ -34,6 +34,8 @@ import burstcode.diary.R;
 import burstcode.diary.adapter.NoteAdapter;
 import burstcode.diary.model.Note;
 
+import static burstcode.diary.view.AddNewNoteActivity.RESULT_UPDATE;
+
 
 public class NotesActivity extends AppCompatActivity {
     private static final String TAG = "DialogsActivity";
@@ -112,6 +114,13 @@ public class NotesActivity extends AppCompatActivity {
         Toast.makeText(this, "New note added", Toast.LENGTH_SHORT).show();
     }
 
+    public static void updateNote(Note note){
+        Map<String, Object> noteValues = note.toMap();
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/"+note.getUid(), noteValues);
+        dbRef.updateChildren(childUpdates);
+    }
+
     private void readData(){
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -149,10 +158,14 @@ public class NotesActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_ADD_NOTE){
+            Log.d(TAG, "onActivityResult: "+resultCode);
             if (resultCode == Activity.RESULT_OK){
+                assert data != null;
                 Note note = (Note) data.getSerializableExtra("newNote");
+                assert note != null;
                 writeNewNote(note);
             }
         }
     }
+
 }
