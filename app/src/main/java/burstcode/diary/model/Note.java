@@ -8,6 +8,7 @@ import java.util.Map;
 
 @IgnoreExtraProperties
 public class Note implements Serializable {
+    private String uid;
     private int hour;
     private int minute;
     private int day;
@@ -18,6 +19,7 @@ public class Note implements Serializable {
     private int color;
 
     public Note(long hour, long minute, long day, long month, long year, String title, String content, long color) {
+        this.uid = "";
         this.hour = (int) hour;
         this.minute = (int) minute;
         this.day = (int) day;
@@ -92,8 +94,17 @@ public class Note implements Serializable {
         this.color = color;
     }
 
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
     public Map<String, Object> toMap(){
         HashMap<String, Object> result = new HashMap<>();
+        result.put("uid", uid);
         result.put("hour", hour);
         result.put("minute", minute);
         result.put("day", day);

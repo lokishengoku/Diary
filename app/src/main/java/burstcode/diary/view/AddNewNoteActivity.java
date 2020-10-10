@@ -141,13 +141,10 @@ public class AddNewNoteActivity extends AppCompatActivity {
                 colorPicker.dismiss();
             }
         });
-        timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
-            @Override
-            public void onTimeChanged(TimePicker timePicker, int i, int i1) {
-                pickedTime = true;
-                note.setHour(i);
-                note.setMinute(i1);
-            }
+        timePicker.setOnTimeChangedListener((timePicker, i, i1) -> {
+            pickedTime = true;
+            note.setHour(i);
+            note.setMinute(i1);
         });
 
         //Color Picker
@@ -177,9 +174,13 @@ public class AddNewNoteActivity extends AppCompatActivity {
         //Delete
         btnDelete.setOnClickListener(view -> {
             btnDelete.setColorFilter(R.color.colorPrimary);
-            Intent returnIntent = new Intent();
-            setResult(RESULT_DELETE, returnIntent);
-            finish();
+            if(isNewNote) Toast.makeText(this, "This note hasn't added yet", Toast.LENGTH_SHORT).show();
+            else {
+                NotesActivity.deleteNote(note);
+                Intent returnIntent = new Intent();
+                setResult(RESULT_DELETE, returnIntent);
+                finish();
+            }
         });
     }
 

@@ -34,17 +34,16 @@ import burstcode.diary.R;
 import burstcode.diary.adapter.NoteAdapter;
 import burstcode.diary.model.Note;
 
-import static burstcode.diary.view.AddNewNoteActivity.RESULT_DELETE;
 
 public class NotesActivity extends AppCompatActivity {
     private static final String TAG = "DialogsActivity";
     public static final int RC_ADD_NOTE = 234;
     private Toolbar toolbar;
 
-    private FirebaseAuth mAuth;
-    private FirebaseDatabase database;
-    private FirebaseUser user;
-    private DatabaseReference dbRef;
+    private static FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private static FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private static FirebaseUser user = mAuth.getCurrentUser();
+    private static DatabaseReference dbRef = database.getReference().child(user.getUid());
 
     private ArrayList<Note> notes;
     private RecyclerView recViewNotes;
@@ -59,11 +58,11 @@ public class NotesActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-
-        database = FirebaseDatabase.getInstance();
-        dbRef = database.getReference().child(user.getUid());
+//        mAuth = FirebaseAuth.getInstance();
+//        user = mAuth.getCurrentUser();
+//
+//        database = FirebaseDatabase.getInstance();
+//        dbRef = database.getReference().child(user.getUid());
 
 //        writeNewNote(22, 18, 9, 10, 2020, "Test", "just a test", 0x555555);
         recViewNotes = findViewById(R.id.recViewNotes);
@@ -103,6 +102,7 @@ public class NotesActivity extends AppCompatActivity {
 
     private void writeNewNote(Note note){
         String key = dbRef.push().getKey();
+        note.setUid(key);
         Map<String, Object> noteValues = note.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
@@ -128,6 +128,7 @@ public class NotesActivity extends AppCompatActivity {
                             (String)noteMap.get("title"),
                             (String)noteMap.get("content"),
                             (long)noteMap.get("color"));
+                    note.setUid((String)noteMap.get("uid"));
                     notes.add(note);
                 }
                 noteAdapter.notifyDataSetChanged();
@@ -140,6 +141,10 @@ public class NotesActivity extends AppCompatActivity {
         });
     }
 
+    public static void deleteNote(Note note){
+        dbRef.child(note.getUid()).removeValue();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -147,8 +152,6 @@ public class NotesActivity extends AppCompatActivity {
             if (resultCode == Activity.RESULT_OK){
                 Note note = (Note) data.getSerializableExtra("newNote");
                 writeNewNote(note);
-            } else if(resultCode == RESULT_DELETE){
-
             }
         }
     }

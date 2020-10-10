@@ -2,6 +2,7 @@ package burstcode.diary.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import java.util.Random;
 
 import burstcode.diary.R;
 import burstcode.diary.model.Note;
+import burstcode.diary.view.AddNewNoteActivity;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     private ArrayList<Note> notes = new ArrayList<>();
@@ -52,6 +54,15 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
         holder.txtTimeRemaining.setText(timeDurationCounter(note));
         holder.cardViewNoteContainer.setCardBackgroundColor(note.getColor());
+        holder.cardViewNoteContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, AddNewNoteActivity.class);
+                intent.putExtra("isNewNote", false);
+                intent.putExtra("currentNote", note);
+                mContext.startActivity(intent);
+            }
+        });
         holder.txtContent.setText(note.getContent());
         holder.txtTitle.setText(note.getTitle());
         holder.txtAmPm.setText(note.getHour()>12?"PM":"AM");
