@@ -51,9 +51,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         Note note = notes.get(position);
 
         holder.txtTimeRemaining.setText(timeDurationCounter(note));
-        Random rnd = new Random();
-        int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-        holder.cardViewNoteContainer.setCardBackgroundColor(color);
+        holder.cardViewNoteContainer.setCardBackgroundColor(note.getColor());
         holder.txtContent.setText(note.getContent());
         holder.txtTitle.setText(note.getTitle());
         holder.txtAmPm.setText(note.getHour()>12?"PM":"AM");
@@ -77,7 +75,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
 
         if(noteDate.equals(today))
             return "Today";
-        return ChronoUnit.DAYS.between(noteDate, today)+" days ago";
+        int dayDuration = (int) ChronoUnit.DAYS.between(noteDate, today);
+        if (dayDuration > 0) return dayDuration+" days ago";
+        else return -dayDuration+" days later";
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

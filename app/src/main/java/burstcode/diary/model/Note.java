@@ -2,11 +2,12 @@ package burstcode.diary.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 @IgnoreExtraProperties
-public class Note {
+public class Note implements Serializable {
     private int hour;
     private int minute;
     private int day;

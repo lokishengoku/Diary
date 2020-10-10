@@ -1,18 +1,22 @@
-package burstcode.diary;
+package burstcode.diary.view;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -25,11 +29,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import burstcode.diary.MainActivity;
+import burstcode.diary.R;
 import burstcode.diary.adapter.NoteAdapter;
 import burstcode.diary.model.Note;
 
-public class DialogsActivity extends AppCompatActivity {
+import static burstcode.diary.view.AddNewNoteActivity.RESULT_DELETE;
+
+public class NotesActivity extends AppCompatActivity {
     private static final String TAG = "DialogsActivity";
+    public static final int RC_ADD_NOTE = 234;
     private Toolbar toolbar;
 
     private FirebaseAuth mAuth;
@@ -41,10 +50,12 @@ public class DialogsActivity extends AppCompatActivity {
     private RecyclerView recViewNotes;
     private NoteAdapter noteAdapter;
 
+    private FloatingActionButton btnCreateNewNote;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dialogs);
+        setContentView(R.layout.activity_notes);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -62,6 +73,13 @@ public class DialogsActivity extends AppCompatActivity {
         noteAdapter.setNotes(notes);
         recViewNotes.setAdapter(noteAdapter);
         readData();
+
+        btnCreateNewNote = findViewById(R.id.btnAddNewNote);
+        btnCreateNewNote.setOnClickListener(view -> {
+            Intent intent = new Intent(NotesActivity.this, AddNewNoteActivity.class);
+            intent.putExtra("isNewNote", true);
+            startActivityForResult(intent, RC_ADD_NOTE);
+        });
 
     }
 
@@ -83,21 +101,22 @@ public class DialogsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void writeNewNote(int hour, int minute, int day, int month, int year, String title, String content, int color){
+    private void writeNewNote(Note note){
         String key = dbRef.push().getKey();
-        Note note = new Note(hour, minute, day, month, year, title, content, color);
         Map<String, Object> noteValues = note.toMap();
 
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/"+key, noteValues);
 
         dbRef.updateChildren(childUpdates);
+        Toast.makeText(this, "New note added", Toast.LENGTH_SHORT).show();
     }
 
     private void readData(){
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                notes.clear();
                 for (DataSnapshot noteSnapshot : snapshot.getChildren()){
                     HashMap<String, Object> noteMap = (HashMap<String, Object>) noteSnapshot.getValue();
                     assert noteMap != null;
@@ -121,4 +140,16 @@ public class DialogsActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_ADD_NOTE){
+            if (resultCode == Activity.RESULT_OK){
+                Note note = (Note) data.getSerializableExtra("newNote");
+                writeNewNote(note);
+            } else if(resultCode == RESULT_DELETE){
+
+            }
+        }
+    }
 }
